@@ -2,7 +2,6 @@ package com.test.mail.dto;
 
 
 
-import java.sql.Timestamp;
 import java.util.Date;
 
 import lombok.Data;
@@ -21,6 +20,7 @@ public class EmailStorageDto {
 	private int port;
 	private String mailForder;
 	private Date createdDate;
+
 	
 	public EmailStorageDto(int id, String email, String password,String protocol, String server, int port, String mailForder, Date createdDate)
 	{

@@ -15,6 +15,7 @@ import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.URLName;
 import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
 import javax.mail.search.FlagTerm;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ import org.springframework.stereotype.Service;
 import com.test.mail.dto.EmailStorageDto;
 
 @Service
-public class getMailService {
+public class MailAccessService {
 	
 
 	
@@ -38,14 +39,12 @@ public class getMailService {
 	
 	public void login(EmailStorageDto emailStorageDto) throws NoSuchProviderException,MessagingException{
 		
-		String urlProtocol=emailStorageDto.getProtocol()+"s";
-		String isSsl="mail."+emailStorageDto.getProtocol()+".ssl.enable";
-		URLName url =new URLName(urlProtocol,emailStorageDto.getServer(),emailStorageDto.getPort(),emailStorageDto.getMailForder(),emailStorageDto.getEmail(),emailStorageDto.getPassword());
+
+		URLName url =new URLName(emailStorageDto.getProtocol(),emailStorageDto.getServer(),emailStorageDto.getPort(),emailStorageDto.getMailForder(),emailStorageDto.getEmail(),emailStorageDto.getPassword());
 		
 		System.err.println(emailStorageDto);
 
 		Properties props = new Properties();
-		props.setProperty(isSsl, "true");
 		session=Session.getInstance(props);
 
 		store = session.getStore(url);
@@ -56,7 +55,7 @@ public class getMailService {
 	}
 	public void logout() throws MessagingException{
 		
-		folder.close();
+		folder.close(true);
 		store.close();
 		store=null;
 		session=null;
@@ -69,17 +68,34 @@ public class getMailService {
 	return messageCount;
 	
 	}
-	public Message[] getAllMessages() throws MessagingException{
+	public Message[] getMessagesByLength(int length) throws MessagingException{
 		
-			return folder.getMessages();
+		
+			
+			return folder.getMessages(1, length);
 		
 	}
+	
+
+	
+
 	public Message[] getNotSeenMessages() throws MessagingException { 
 		
 		
 		return folder.search(new FlagTerm(new Flags(Flags.Flag.SEEN), false));
 		
 	}
+//	public Message[] getNotSeenAndDeletedMessesges() throws MessagingException{
+//		
+//		return folder.getMessages();
+//	
+//}
+//	public void checkReadMessege(int index) throws MessagingException {
+//		
+//		MimeMessage copy=new MimeMessage((MimeMessage) folder.getMessage(index));
+//		System.err.println(copy);
+//		
+//	}
 	public void getMessgeText(Part part) throws IOException,MessagingException{
 		
 
@@ -88,7 +104,8 @@ public class getMailService {
 		System.err.println("mp.count: "+mp.getCount());
 		for(int i=0;i<mp.getCount();i++) {
 			MimeBodyPart mimeBodyPart =(MimeBodyPart)mp.getBodyPart(i);
-			System.err.println("mp.bodypart "+i+": "+mimeBodyPart.getContent().toString());
+			System.err.println("mp.bodypart "+i+": ");
+			System.err.println(mimeBodyPart.getContent().toString());
 			
 		}
 

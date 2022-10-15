@@ -1,25 +1,17 @@
 package com.test.mail.service;
 
 import java.io.IOException;
-import java.security.Key;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.List;
-import java.util.Optional;
 
-import javax.crypto.KeyGenerator;
-import javax.crypto.spec.IvParameterSpec;
 import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.test.mail.config.PasswordSecurity;
 import com.test.mail.dao.MailDaoImpl;
+import com.test.mail.dto.EmailParamDto;
 import com.test.mail.dto.EmailStorageDto;
-
 import com.test.mail.model.EmailStorage;
 import com.test.mail.repository.EmailStorageRepository;
 
@@ -45,10 +37,10 @@ public class MailService {
 		emailStorageRepository.save(emailStorage);
 	}
 	
-	public void searchMail(String email,String protocol) throws IOException,MessagingException{
+	public void searchMail(EmailParamDto mailParams) throws IOException,MessagingException{
 		
 		
-	mailDaoImpl.getEmail((EmailStorageDto)emailStorageRepository.findByEmailAndProtocol(email,protocol,EmailStorageDto.class).get(0));
+	mailDaoImpl.getEmail((EmailStorageDto)emailStorageRepository.findByEmailAndProtocol(mailParams.getEmail(),mailParams.getProtocol(),EmailStorageDto.class).get(0),mailParams);
 	
 		
 	}
